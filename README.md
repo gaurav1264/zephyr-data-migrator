@@ -1,4 +1,4 @@
-# Zephyr-migration
+# Zephyr-data-migrator
 This is self-service utility to migrate "Zephyr for Jira" data from one Jira server to another.
 
 # Prerequisites
@@ -9,7 +9,11 @@ This is self-service utility to migrate "Zephyr for Jira" data from one Jira ser
 
 # Compatibility
 
-# Setup instructions
+# Installation guide
 - Setup Java 1.8+
 - Downlod the utility jar
 - Go to $JAVA_HOME/bin/java -jar 
+
+# Development setup guide
+- IntelliJ 2018+
+- Java 1.8+
