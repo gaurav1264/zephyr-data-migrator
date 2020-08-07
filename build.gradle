@@ -1,0 +1,39 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.2.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+
+group = 'com.prestige.zephyr'
+version = '1.0.0'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+    //https://springfox.github.io/springfox/docs/snapshot/#migrating-from-existing-2-x-version
+    implementation "io.springfox:springfox-boot-starter:3.0.0"
+    //implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '3.0.0'
+    //implementation group: 'io.springfox', name: 'springfox-swagger2', version: '3.0.0'
+
+    compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+	useJUnitPlatform()
+}
