@@ -1,11 +1,11 @@
-package com.prestige.zephyr.migrator.Domain;
+package com.prestige.zephyr.migrator.domain;
 
 import lombok.Data;
 
 import java.util.List;
 
 @Data
-public class TestCylceIssue implements Comparable<TestCylceIssue> {
+public class TestCycleIssue implements Comparable<TestCycleIssue> {
     private String issueId;
     private String issueKey;
     private String issueSummary;
@@ -28,7 +28,7 @@ public class TestCylceIssue implements Comparable<TestCylceIssue> {
     private List<StepResult> stepResults;
 
     @Override
-    public int compareTo(TestCylceIssue arg0) {
+    public int compareTo(TestCycleIssue arg0) {
         return this.getOrderId().compareTo(arg0.getOrderId());
     }
 }

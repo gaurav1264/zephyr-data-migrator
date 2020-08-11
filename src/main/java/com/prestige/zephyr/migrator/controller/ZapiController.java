@@ -1,9 +1,11 @@
 package com.prestige.zephyr.migrator.controller;
 
-import com.prestige.zephyr.migrator.Domain.JiraProperties;
-import com.prestige.zephyr.migrator.services.ZapiServices;
+import com.prestige.zephyr.migrator.domain.JiraIssue;
+import com.prestige.zephyr.migrator.domain.JiraProperties;
+import com.prestige.zephyr.migrator.service.ZapiService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,6 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
+
+import java.util.List;
+import java.util.Map;
 
 //import java.util.logging.Logger;
 //import java.util.logging.Logger;
@@ -24,7 +29,7 @@ public class ZapiController {
     private JiraProperties properties;
 
     @Autowired
-    private ZapiServices zServices;
+    private ZapiService zServices;
 
     @RequestMapping(path="/info",method = RequestMethod.GET)
     @ApiOperation(value = "basic zapi info")
@@ -40,6 +45,18 @@ public class ZapiController {
     @RequestMapping(path="/migrateTestStep/{sourceInstance}/{targetInstance}/{projectKey}",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "migrate test step",tags = "Zephyr MigrationAPI")
     public ResponseEntity<?> migrateTestStep(String sourceInstance,String targetInstance,String projectKey){
+        log.info("migrateTestStep::: sourceInstance: " + sourceInstance + "  targetInstance: " + targetInstance +  " Projectkey:" + projectKey);
+        try {
+            List<JiraIssue> jIssue = zServices.getAllIssues(sourceInstance,targetInstance,projectKey);
+            Map<String,String> result  = zServices.migrateTestStepData(sourceInstance,targetInstance,jIssue);
+            log.info("migrateTestStep::: All result: " + result);
+            log.info("migrateTestStep::: Completed ");
+            return ResponseEntity.ok(result);
+        }
+        catch (Exception ex){
+            log.error("migrateTestStep::: Error while migrating test step " , ex);
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("migrateTestStep::: Error while migrating test step " + ex.getMessage());
+        }
         return ResponseEntity.ok("All is well");
     }
 

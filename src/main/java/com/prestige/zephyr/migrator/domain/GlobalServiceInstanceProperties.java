@@ -1,4 +1,4 @@
-package com.prestige.zephyr.migrator.Domain;
+package com.prestige.zephyr.migrator.domain;
 
 import java.util.List;
 

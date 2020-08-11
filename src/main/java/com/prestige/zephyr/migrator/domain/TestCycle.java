@@ -1,6 +1,5 @@
-package com.prestige.zephyr.migrator.Domain;
+package com.prestige.zephyr.migrator.domain;
 
-import com.sun.org.apache.xerces.internal.impl.xpath.XPath;
 import lombok.Data;
 
 import java.util.List;
@@ -22,7 +21,7 @@ public class TestCycle implements Comparable<TestCycle>{
     private String endDate;
     private String ended;
 
-    private List<TestCylceIssue> execution;
+    private List<TestCycleIssue> execution;
 
     @Override
     public  int compareTo(TestCycle arg0){
