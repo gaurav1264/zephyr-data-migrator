@@ -1,9 +1,7 @@
 package com.prestige.zephyr.migrator.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.prestige.zephyr.migrator.domain.JiraInstance;
-import com.prestige.zephyr.migrator.domain.JiraIssue;
-import com.prestige.zephyr.migrator.domain.JiraProperties;
+import com.prestige.zephyr.migrator.domain.*;
 import com.prestige.zephyr.migrator.utility.AppUtils;
 import com.prestige.zephyr.migrator.utility.InstanceHelper;
 import com.prestige.zephyr.migrator.utility.RequestBuilder;
@@ -33,7 +31,7 @@ public class ZapiService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    
+
     public List<JiraIssue> getAllIssues(String srcInstance, String targetInstance, String projectKey) throws Exception {
         try {
             log.info("Get all issues for giving source instances:" + srcInstance + " & project Key :" + projectKey);
@@ -136,7 +134,7 @@ public class ZapiService {
                             log.info("migrateTestStepData::: Test Step Data already found in target issue" + issue.getIssueKey());
                             result.put(issue.getIssueKey(), "Test Step Data already found in target issue");
                         } else {
-                            createStepsinTargetIssue(targetInstance,issue,sourceSteps);
+                            createStepsinTargetIssue(targetInstance, issue, sourceSteps);
                             log.info("migrateTestStepData::: Test steps migrated Successfully" + issue.getIssueKey());
                             result.put(issue.getIssueKey(), "Test steps migrated Successfully");
                         }
@@ -192,7 +190,7 @@ public class ZapiService {
             log.info("getTestStepDetails::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
                     requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
-            log.info("getTestStepDetails::: response:" + endPoint);
+            log.info("getTestStepDetails::: response:" + response);
             JSONObject jObject = new JSONObject(response);
             JSONArray jsonArray = jObject.getJSONArray("stepBeanCollection");
             for (int i = 0; i < jsonArray.length(); i++) {
@@ -225,5 +223,227 @@ public class ZapiService {
             throw ex;
         }
         return steps;
+    }
+
+    //migrate test Cycle
+    public Map<String, String> migrateTestCycleData(String srcInstance, String targetInstance, String projectKey) {
+        Map<String, String> result = new TreeMap<>();
+        log.info("migrateTestCycleData::: srcInstance: " + srcInstance + " TargetInstance: " + targetInstance + " project : " + projectKey);
+        try {
+            String srcProjectId = getProjectIdforPKey(srcInstance, projectKey);
+            String targetProjectID = getProjectIdforPKey(targetInstance, projectKey);
+            Map<String, List<TestCycle>> cylceByVersion = getCycleByVersion(srcInstance, projectKey);
+
+        } catch (Exception ex) {
+
+        }
+        return result;
+    }
+
+    public String getProjectIdforPKey(String instance, String projectKey) throws Exception {
+        log.info("getProjectIdforPKey::: Instance: " + instance + " project : " + projectKey);
+        try {
+            String pId;
+            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            String endPointUrl = "/rest/api/2/project/" + projectKey;
+            String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
+            log.info("getProjectIdforPKey::: endPoint:" + endPoint);
+            String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
+                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+            log.info("getProjectIdforPKey::: response:" + response);
+            JSONObject jsonObject = new JSONObject(response);
+            pId = jsonObject.getString("id");
+            return pId;
+        } catch (Exception ex) {
+            throw ex;
+        }
+
+    }
+
+    public Map<String, List<TestCycle>> getCycleByVersion(String instance, String projectId) throws Exception {
+        Map<String, List<TestCycle>> versionMap = new HashMap<>();
+        try {
+            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            String endPointUrl = "/rest/zapi/latest/cycle?projectId=" + projectId;
+            String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
+            log.info("getCycleByVersion::: endPoint:" + endPoint);
+            String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
+                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+            log.info("getCycleByVersion::: response:" + response);
+            JSONObject jsonObject = new JSONObject(response);
+            Iterator<String> keys = jsonObject.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                log.info("getCycleByVersion::: Version Id:" + key);
+                List<TestCycle> cycleList = new ArrayList<>();
+                JSONArray cycles = jsonObject.getJSONArray(key);
+                for (int i = 0; i < cycles.length(); i++) {
+                    JSONObject object = cycles.getJSONObject(i);
+                    Iterator<String> cycleKeys = object.keys();
+                    while (cycleKeys.hasNext()) {
+                        String cycleKey = cycleKeys.next();
+                        log.info("getCycleByVersion::: Cycle Id:" + cycleKey);
+                        if (!"recordsCount".equals(cycleKey)) {
+                            JSONObject cycleObject = object.getJSONObject(cycleKey);
+                            TestCycle cycle = convertToCycleObject(cycleObject, projectId);
+                            cycle.setCycleId(cycleKey);
+                            List<TestCycleIssue> executionDetail = getExecutionDetails(instance, cycleKey, projectId, key);
+                            cycle.setExecution(executionDetail);
+                            cycleList.add(cycle);
+                        }
+                    }
+                }
+                versionMap.put(key, cycleList);
+            }
+            return versionMap;
+        } catch (Exception ex) {
+            log.error("getCycleByVersion:::Error while getting cycle and versions :", ex);
+            throw ex;
+        }
+    }
+
+    private TestCycle convertToCycleObject(JSONObject cycleObject, String projectId) throws JSONException {
+        TestCycle cycle = new TestCycle();
+        cycle.setVersionName(cycleObject.getString("versionName"));
+        cycle.setName(cycleObject.getString("name"));
+        try {
+            String description = cycleObject.getString("description");
+            cycle.setDescription(description);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String build = cycleObject.getString("build");
+            cycle.setDescription(build);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String environment = cycleObject.getString("environment");
+            cycle.setDescription(environment);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String createdBy = cycleObject.getString("createdBy");
+            cycle.setCreatedBy(createdBy);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String createdByDisplay = cycleObject.getString("createdByDisplay");
+            cycle.setCreatedByDisplay(createdByDisplay);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String modifiedBy = cycleObject.getString("modifiedBy");
+            cycle.setModifiedBy(modifiedBy);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String startDate = cycleObject.getString("startDate");
+            cycle.setStartDate(startDate);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String endDate = cycleObject.getString("endDate");
+            cycle.setEndDate(endDate);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String ended = cycleObject.getString("ended");
+            cycle.setEnded(ended);
+        } catch (Exception ex) {
+
+        }
+        return cycle;
+    }
+
+    public static Map<String, List<TestCycleIssue>> executionDetailsCache = new HashMap<>();
+
+    private List<TestCycleIssue> getExecutionDetails(String instance, String cycleId, String projectId, String versionId) throws Exception {
+        List<TestCycleIssue> execution = null;
+        JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+        String endPointUrl = "/rest/zapi/latest/execution?action=expand&cycleId=" + cycleId + "&projectId=" + projectId + "&versionId=" + versionId;
+        String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
+        log.info("getExecutionDetails::: endPoint:" + endPoint);
+        if (executionDetailsCache.containsKey(endPoint)) {
+            log.info("getExecutionDetails::: returning from cache:");
+            execution = executionDetailsCache.get(endPoint);
+            log.info("getExecutionDetails::: return from cache: Execution :" + execution);
+            return execution;
+        } else {
+            execution = new ArrayList<>();
+            String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
+                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+            log.info("getExecutionDetails::: response:" + response);
+            JSONObject responseObject = new JSONObject(response);
+            JSONArray jsonArray = responseObject.getJSONArray("executions");
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject executions = jsonArray.getJSONObject(i);
+                String executionId = executions.getString("id");
+                TestCycleIssue tcIssue = convertToCycleIssueObject(executions, projectId);
+                execution.add(tcIssue);
+            }
+            executionDetailsCache.put(endPoint, execution);
+        }
+        return execution;
+    }
+
+    private TestCycleIssue convertToCycleIssueObject(JSONObject cycleObject, String projectId) throws JSONException {
+        TestCycleIssue cycleIssue = new TestCycleIssue();
+        cycleIssue.setExecutionId(cycleObject.getString("id"));
+        cycleIssue.setIssueId(cycleObject.getString("issueId"));
+        cycleIssue.setIssueKey(cycleObject.getString("issueKey"));
+        cycleIssue.setExecutionStatus(cycleObject.getString("executionStatus"));
+        cycleIssue.setOrderId(cycleObject.getInt("orderId"));
+        try {
+            String executedOn = cycleObject.getString("executedOn");
+            cycleIssue.setExecutedOn(executedOn);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String executedBy = cycleObject.getString("executedBy");
+            cycleIssue.setExecutedBy(executedBy);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String assignedTo = cycleObject.getString("assignedTo");
+            cycleIssue.setAssignedTo(assignedTo);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String createdBy = cycleObject.getString("createdBy");
+            cycleIssue.setCreatedBy(createdBy);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String executedByDisplay = cycleObject.getString("executedByDisplay");
+            cycleIssue.setExecutedByDisplay(executedByDisplay);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String modifiedBy = cycleObject.getString("modifiedBy");
+            cycleIssue.setModifiedBy(modifiedBy);
+        } catch (Exception ex) {
+
+        }
+        try {
+            String comment = cycleObject.getString("comment");
+            cycleIssue.setComment(comment);
+        } catch (Exception ex) {
+
+        }
+
+        return cycleIssue;
     }
 }

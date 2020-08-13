@@ -31,33 +31,48 @@ public class ZapiController {
     @Autowired
     private ZapiService zServices;
 
-    @RequestMapping(path="/info",method = RequestMethod.GET)
+    @RequestMapping(path = "/info", method = RequestMethod.GET)
     @ApiOperation(value = "basic zapi info")
-    public ResponseEntity getInfo(){
-        return ResponseEntity.ok("All is well");
-    }
-    @RequestMapping(path="/instances",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "Get JIRA Instance info",tags = "Zephyr MigrationAPI")
-    public ResponseEntity<?> getInstances(){
-        log.info("instances :" , properties);
-        return ResponseEntity.ok(properties);
-    }
-    @RequestMapping(path="/migrateTestStep/{sourceInstance}/{targetInstance}/{projectKey}",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation(value = "migrate test step",tags = "Zephyr MigrationAPI")
-    public ResponseEntity<?> migrateTestStep(String sourceInstance,String targetInstance,String projectKey){
-        log.info("migrateTestStep::: sourceInstance: " + sourceInstance + "  targetInstance: " + targetInstance +  " Projectkey:" + projectKey);
-        try {
-            List<JiraIssue> jIssue = zServices.getAllIssues(sourceInstance,targetInstance,projectKey);
-            Map<String,String> result  = zServices.migrateTestStepData(sourceInstance,targetInstance,jIssue);
-            log.info("migrateTestStep::: All result: " + result);
-            log.info("migrateTestStep::: Completed ");
-            return ResponseEntity.ok(result);
-        }
-        catch (Exception ex){
-            log.error("migrateTestStep::: Error while migrating test step " , ex);
-            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("migrateTestStep::: Error while migrating test step " + ex.getMessage());
-        }
+    public ResponseEntity getInfo() {
         return ResponseEntity.ok("All is well");
     }
 
+    @RequestMapping(path = "/instances", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Get JIRA Instance info", tags = "Zephyr MigrationAPI")
+    public ResponseEntity<?> getInstances() {
+        log.info("instances :", properties);
+        return ResponseEntity.ok(properties);
+    }
+
+    @RequestMapping(path = "/migrateTestStep/{sourceInstance}/{targetInstance}/{projectKey}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "migrate test step", tags = "Zephyr MigrationAPI")
+    public ResponseEntity<?> migrateTestStep(String sourceInstance, String targetInstance, String projectKey) {
+        log.info("migrateTestStep::: sourceInstance: " + sourceInstance + "  targetInstance: " + targetInstance + " Projectkey:" + projectKey);
+        try {
+            List<JiraIssue> jIssue = zServices.getAllIssues(sourceInstance, targetInstance, projectKey);
+            Map<String, String> result = zServices.migrateTestStepData(sourceInstance, targetInstance, jIssue);
+            log.info("migrateTestStep::: All result: " + result);
+            log.info("migrateTestStep::: Completed ");
+            return ResponseEntity.ok(result);
+        } catch (Exception ex) {
+            log.error("migrateTestStep::: Error while migrating test step ", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("migrateTestStep::: Error while migrating test step " + ex.getMessage());
+        }
+        //return ResponseEntity.ok("All is well");
+    }
+
+    @RequestMapping(path = "/migrateTestCycle/{sourceInstance}/{targetInstance}/{projectKey}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "migrate test Cylce", tags = "Zephyr MigrationAPI")
+    public ResponseEntity<?> migrateTestCycle(String sourceInstance, String targetInstance, String projectKey) {
+        log.info("migrateTestStep::: sourceInstance: " + sourceInstance + "  targetInstance: " + targetInstance + " Projectkey:" + projectKey);
+        try {
+            Map<String, String> resultMigrateTestCycle = zServices.migrateTestCycleData(sourceInstance, targetInstance, projectKey);
+            log.info("migrateTestCycle::: All result: " + resultMigrateTestCycle);
+            log.info("migrateTestCycle::: Completed ");
+            return ResponseEntity.ok(resultMigrateTestCycle);
+        } catch (Exception ex) {
+            log.error("migrateTestStep::: Error while migrating test step ", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("migrateTestStep::: Error while migrating test step " + ex.getMessage());
+        }
+    }
 }
