@@ -24,6 +24,7 @@ public class TestCycleIssue implements Comparable<TestCycleIssue> {
     private String createdBy;
     private String modifiedBy;
     private String assignedTo;
+    private String assignedToDisplay;
     private List<String> defects;
     private List<StepResult> stepResults;
 
