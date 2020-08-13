@@ -34,7 +34,7 @@ This is self-service utility to migrate "Zephyr for Jira" data from one Jira ser
 - Once application is running, use below URl to access APIs
     - http://localhost:8080/swagger-ui/index.html
 
-##Rest Endpoints
+## Rest Endpoints
 - migrateteststep : migrate test steps from source instance to destination instance
      - Due to some special characters in the data other than which are handled by the code few test steps for few issues may not be migrated. You will get the list in the output of such data, you can migrate them manually. 
 - migratetestcycle: create test Cylces and attach test case to cycles by creating execution on the destination instances.
