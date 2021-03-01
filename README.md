@@ -25,7 +25,7 @@ This is self-service utility to migrate "Zephyr for Jira" data from one Jira ser
 
 ## Instructions
 - Clone project locally
-- Open project in IntelliJ 2020+
+- Open project in IntelliJ 2020.2 (Or any other version with gradle <7.0)
 - Enable Annotation processor in IntelliJ
 - Open Terminal & Build project using below command
     - "gradlew clean build"
