@@ -4,6 +4,8 @@ import com.prestige.zephyr.migrator.domain.JiraIssue;
 import com.prestige.zephyr.migrator.domain.JiraProperties;
 import com.prestige.zephyr.migrator.service.ZapiService;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -11,14 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Logger;
 
 import java.util.List;
 import java.util.Map;
-
-//import java.util.logging.Logger;
-//import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/zapi")

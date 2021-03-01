@@ -9,17 +9,11 @@ spring:
     active: "dev"
   main:
     banner-mode: "off"
-
-server:
-  email: default@mkyong.com
-
 ---
-
 spring:
   profiles: dev
-server:
-  email: dev@mkyong.com
-  cluster:
+jira:
+  instances:
     - name: JIRA1
       url: http://JIRA1.com
       username: abc
@@ -28,13 +22,10 @@ server:
       url: http://JIRA2.com
       username: abc
       password: abc@123
-
 ---
-
 spring:
   profiles: prod
-server:
-  email: prod@mkyong.com
+jira:
   instances:
     - name: JIRA1
       url: http://JIRA1.com

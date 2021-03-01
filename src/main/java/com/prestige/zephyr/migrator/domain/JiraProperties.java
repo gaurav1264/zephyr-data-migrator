@@ -1,16 +1,15 @@
 package com.prestige.zephyr.migrator.domain;
 
-//import jdk.nashorn.internal.objects.annotations.Getter;
-//import jdk.nashorn.internal.objects.annotations.Setter;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ConfigurationProperties(prefix = "properties")
+@Component
+@ConfigurationProperties(prefix = "jira")
 public class JiraProperties implements GlobalServiceInstanceProperties {
 
     @Getter
