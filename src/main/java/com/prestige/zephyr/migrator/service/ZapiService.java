@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.codehaus.jettison.json.*;
 
-import java.io.IOException;
 import java.text.Normalizer;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,7 +65,7 @@ public class ZapiService {
     private Map<String, Long> getIssuesByProjectKey(String instance, String projectKey) throws Exception {
         Map<String, Long> issuesByKeyId = new TreeMap<>();
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/api/2/search?jql=" + projectKey + " AND issuetype=TEST ORDER BY key&maxResults=0";
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssuesByProjectKey::: endPoint:" + endPoint);
@@ -103,7 +102,7 @@ public class ZapiService {
     private JSONArray getIssuesByJQL(String instance, String projectKey, int start, int maxResult) throws Exception {
 
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/api/2/search?jql=" + projectKey + " AND issuetype=TEST ORDER BY key&fields=*none&maxResults=" + maxResult + "&startAt=" + start;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssuesByJQL::: endPoint:" + endPoint);
@@ -160,7 +159,7 @@ public class ZapiService {
 
     private void createStepsinTargetIssue(String instance, JiraIssue issue, List<Map<String, String>> testSteps) throws Exception {
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/zapi/latest/teststep/" + issue.getNewIssueId();
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("createStepsinTargetIssue::: endPoint:" + endPoint);
@@ -188,7 +187,7 @@ public class ZapiService {
         List<Map<String, String>> steps = new ArrayList<>();
         log.info("getTestStepDetails::: Instance: " + instance + " IssueKey : " + issueKey);
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/zapi/latest/teststep/" + issueId;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getTestStepDetails::: endPoint:" + endPoint);
@@ -249,7 +248,7 @@ public class ZapiService {
         log.info("getProjectIdforPKey::: Instance: " + instance + " project : " + projectKey);
         try {
             String pId;
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/api/2/project/" + projectKey;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getProjectIdforPKey::: endPoint:" + endPoint);
@@ -268,7 +267,7 @@ public class ZapiService {
     public Map<String, List<TestCycle>> getCycleByVersion(String instance, String projectId) throws Exception {
         Map<String, List<TestCycle>> versionMap = new HashMap<>();
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/zapi/latest/cycle?projectId=" + projectId;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getCycleByVersion::: endPoint:" + endPoint);
@@ -370,7 +369,7 @@ public class ZapiService {
 
     private List<TestCycleIssue> getExecutionDetails(String instance, String cycleId, String projectId, String versionId) throws Exception {
         List<TestCycleIssue> execution = null;
-        JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+        JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
         String endPointUrl = "/rest/zapi/latest/execution?action=expand&cycleId=" + cycleId + "&projectId=" + projectId + "&versionId=" + versionId;
         String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
         log.info("getExecutionDetails::: endPoint:" + endPoint);
@@ -543,7 +542,7 @@ public class ZapiService {
     private String getVersionId(String instance, String projectId, String versionName) throws Exception {
         String versionId = null;
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/api/2/project" + projectId + "/versions";
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getVersionId::: endPoint:" + endPoint);
@@ -577,7 +576,7 @@ public class ZapiService {
     private String getCycleId(String instance, String projectId, String cycleName, String versionId) throws Exception {
         String cycleId = null;
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/zapi/latest/cycle?projectId=" + projectId + "&versionId=" + versionId;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getCycleId::: endPoint:" + endPoint);
@@ -609,7 +608,7 @@ public class ZapiService {
                 + "  versionId :" + versionId + "  cycleName :" + srcCycle.getName());
         String cycleId = null;
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/zapi/latest/cycle";
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("createCycleonTarget::: endPoint:" + endPoint);
@@ -671,7 +670,7 @@ public class ZapiService {
                 payload.put("versionId", versionId);
                 payload.put("versionId", versionId);
                 payload.put("issues", issueKeys);
-                JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+                JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
                 String endPointUrl = "/rest/zapi/latest/execution/addTeststoCycle/";
                 String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
                 log.info("attachTestCaseToCycle::: endPoint:" + endPoint);
@@ -713,7 +712,7 @@ public class ZapiService {
 
         String zapiResponse = null;
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/zapi/latest/execution/jobProgress/" + jobProgressToken;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("attachTestCaseToCycle::: endPoint:" + endPoint);
@@ -738,7 +737,7 @@ public class ZapiService {
 
     private int getIssueCountInCycle(String instance, String cycleId, String projectId, String versionId) throws Exception {
         try {
-            JiraInstance jInstance = InstanceHelper.getInstancedetailsByName(instance, properties);
+            JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
             String endPointUrl = "/rest/zapi/latest/execution?action=expand&cycleId=" + cycleId + "&projectId=" + projectId + "&versionId=" + versionId;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssueCountInCycle::: endPoint:" + endPoint);
