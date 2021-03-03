@@ -66,7 +66,7 @@ public class ZapiService {
         Map<String, Long> issuesByKeyId = new TreeMap<>();
         try {
             JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
-            String endPointUrl = "/rest/api/2/search?jql=" + projectKey + " AND issuetype=TEST ORDER BY key&maxResults=0";
+            String endPointUrl = "/rest/api/2/search?jql=project=" + projectKey + " AND issuetype=TEST ORDER BY key&maxResults=0";
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssuesByProjectKey::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
@@ -103,7 +103,7 @@ public class ZapiService {
 
         try {
             JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
-            String endPointUrl = "/rest/api/2/search?jql=" + projectKey + " AND issuetype=TEST ORDER BY key&fields=*none&maxResults=" + maxResult + "&startAt=" + start;
+            String endPointUrl = "/rest/api/2/search?jql=project=" + projectKey + " AND issuetype=TEST ORDER BY key&fields=*none&maxResults=" + maxResult + "&startAt=" + start;
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssuesByJQL::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
@@ -668,7 +668,7 @@ public class ZapiService {
                 payload.put("method", "1");
                 payload.put("projectId", projectId);
                 payload.put("versionId", versionId);
-                payload.put("versionId", versionId);
+                //payload.put("versionId", versionId);
                 payload.put("issues", issueKeys);
                 JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
                 String endPointUrl = "/rest/zapi/latest/execution/addTeststoCycle/";
