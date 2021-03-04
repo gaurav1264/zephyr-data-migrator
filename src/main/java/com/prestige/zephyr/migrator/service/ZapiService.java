@@ -70,7 +70,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssuesByProjectKey::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getIssuesByProjectKey::: response:" + response);
             JSONObject jsonObject = new JSONObject(response);
             int maxResults = 1000;
@@ -107,7 +107,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssuesByJQL::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getIssuesByJQL::: response:" + endPoint);
             JSONObject jObject = new JSONObject(response);
             JSONArray jsonArray = jObject.getJSONArray("issues");
@@ -192,7 +192,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getTestStepDetails::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getTestStepDetails::: response:" + response);
             JSONObject jObject = new JSONObject(response);
             JSONArray jsonArray = jObject.getJSONArray("stepBeanCollection");
@@ -253,7 +253,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getProjectIdforPKey::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getProjectIdforPKey::: response:" + response);
             JSONObject jsonObject = new JSONObject(response);
             pId = jsonObject.getString("id");
@@ -272,7 +272,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getCycleByVersion::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getCycleByVersion::: response:" + response);
             JSONObject jsonObject = new JSONObject(response);
             Iterator<String> keys = jsonObject.keys();
@@ -381,7 +381,7 @@ public class ZapiService {
         } else {
             execution = new ArrayList<>();
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getExecutionDetails::: response:" + response);
             JSONObject responseObject = new JSONObject(response);
             JSONArray jsonArray = responseObject.getJSONArray("executions");
@@ -553,7 +553,7 @@ public class ZapiService {
                 return versionId;
             } else {
                 String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                        requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                        requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
                 log.info("getExecutionDetails::: response:" + response);
                 JSONArray responseArray = new JSONArray(response);
                 for (int i = 0; i < responseArray.length(); i++) {
@@ -581,7 +581,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getCycleId::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getCycleId::: response:" + response);
             JSONObject cycleObject = new JSONObject(response);
             Iterator<String> keys = cycleObject.keys();
@@ -717,7 +717,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("attachTestCaseToCycle::: endPoint:" + endPoint);
             zapiResponse = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.trace("attachTestCaseToCycle::: Job progress: " + zapiResponse);
             double progress = new JSONObject(zapiResponse).getDouble("progress");
             log.debug("attachTestCaseToCycle::: Job progress: " + progress);
@@ -742,7 +742,7 @@ public class ZapiService {
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getIssueCountInCycle::: endPoint:" + endPoint);
             String response = rawRestTemplate.exchange(endPoint, HttpMethod.GET,
-                    requestBuilder.withAuthHeader(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
+                    requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getIssueCountInCycle::: response:" + response);
             JSONObject object = new JSONObject(response);
             JSONArray exeArray = object.getJSONArray("executions");
