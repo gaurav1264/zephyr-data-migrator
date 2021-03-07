@@ -131,7 +131,7 @@ public class ZapiService {
                 //get step details from the source instance;
                 List<Map<String, String>> sourceSteps = getTestStepDetails(sourceInstance, issue.getIssueKey(), issue.getOldIssueId());
                 if (sourceSteps.size() > 0) {
-                    List<Map<String, String>> targetSteps = getTestStepDetails(sourceInstance, issue.getIssueKey(), issue.getOldIssueId());
+                    List<Map<String, String>> targetSteps = getTestStepDetails(targetInstance, issue.getIssueKey(), issue.getOldIssueId());
                     try {
                         if (targetSteps.size() > 0) {
                             log.info("migrateTestStepData::: Test Step Data already found in target issue" + issue.getIssueKey());
@@ -235,11 +235,11 @@ public class ZapiService {
         try {
             String srcProjectId = getProjectIdforPKey(srcInstance, projectKey);
             String targetProjectID = getProjectIdforPKey(targetInstance, projectKey);
-            Map<String, List<TestCycle>> cylceByVersion = getCycleByVersion(srcInstance, projectKey);
-            log.info("migrateTestCycleData::: Total project version found is :" + cylceByVersion.size());
-            Map<String, String> outResult = createCylceAndExecution(targetInstance, targetProjectID, cylceByVersion);
+            Map<String, List<TestCycle>> cycleByVersion = getCycleByVersion(srcInstance, srcProjectId);
+            log.info("migrateTestCycleData::: Total project version found is :" + cycleByVersion.size());
+            result = createCycleAndExecution(targetInstance, targetProjectID, cycleByVersion);
         } catch (Exception ex) {
-
+            log.error("migrateTestCycleData:::", ex);
         }
         return result;
     }
@@ -467,9 +467,9 @@ public class ZapiService {
         return cycleIssue;
     }
 
-    private Map<String, String> createCylceAndExecution(String instance, String targetProjectId,
+    private Map<String, String> createCycleAndExecution(String instance, String targetProjectId,
                                                         Map<String, List<TestCycle>> srcCylceByVersion) throws Exception {
-        log.info("migrateTestCycleData::: Instance: " + instance + " TargetProjectId: " + targetProjectId);
+        log.info("createCycleAndExecution::: Instance: " + instance + " TargetProjectId: " + targetProjectId);
         List<String> cylceCreatedByUpdateQuery = new ArrayList<>();
         List<String> executionCreatedByUpdateQuery = new ArrayList<>();
         Map<String, String> query = new HashMap<>();
@@ -485,8 +485,8 @@ public class ZapiService {
                 if (!versionName.equals("Unscheduled")) {
                     versionId = getVersionId(instance, targetProjectId, versionName);
                     if (versionId == null) {
-                        log.error("version name doesnot exists in target instance" + versionName);
-                        throw new Exception("version name doesnot exists in target instance" + versionName);
+                        log.error("version name does not exists in target instance" + versionName);
+                        throw new Exception("version name does not exists in target instance" + versionName);
                     }
                 }
                 String cycleName = tc.getName();

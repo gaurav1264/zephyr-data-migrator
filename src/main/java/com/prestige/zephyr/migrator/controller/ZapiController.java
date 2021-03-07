@@ -55,15 +55,15 @@ public class ZapiController {
     @RequestMapping(path = "/migrateTestCycle", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "migrate test Cycle", tags = "Zephyr Migration API")
     public ResponseEntity<?> migrateTestCycle(@RequestParam String sourceInstance, @RequestParam String targetInstance, @RequestParam String projectKey) {
-        log.info("migrateTestStep::: sourceInstance: " + sourceInstance + "  targetInstance: " + targetInstance + " projectKey:" + projectKey);
+        log.info("migrateTestCycle::: sourceInstance: " + sourceInstance + "  targetInstance: " + targetInstance + " projectKey:" + projectKey);
         try {
             Map<String, String> resultMigrateTestCycle = zServices.migrateTestCycleData(sourceInstance, targetInstance, projectKey);
             log.info("migrateTestCycle::: All result: " + resultMigrateTestCycle);
             log.info("migrateTestCycle::: Completed ");
             return ResponseEntity.ok(resultMigrateTestCycle);
         } catch (Exception ex) {
-            log.error("migrateTestStep::: Error while migrating test step ", ex);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("migrateTestStep::: Error while migrating test cycle. Cause::: " + ex.getMessage());
+            log.error("migrateTestCycle::: Error while migrating test cycle ", ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("migrateTestCycle::: Error while migrating test cycle. Cause::: " + ex.getMessage());
         }
     }
 }
