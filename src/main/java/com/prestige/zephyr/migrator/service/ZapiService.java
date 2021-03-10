@@ -131,7 +131,7 @@ public class ZapiService {
                 //get step details from the source instance;
                 List<Map<String, String>> sourceSteps = getTestStepDetails(sourceInstance, issue.getIssueKey(), issue.getOldIssueId());
                 if (sourceSteps.size() > 0) {
-                    List<Map<String, String>> targetSteps = getTestStepDetails(targetInstance, issue.getIssueKey(), issue.getOldIssueId());
+                    List<Map<String, String>> targetSteps = getTestStepDetails(targetInstance, issue.getIssueKey(), issue.getNewIssueId());
                     try {
                         if (targetSteps.size() > 0) {
                             log.info("migrateTestStepData::: Test Step Data already found in target issue" + issue.getIssueKey());
