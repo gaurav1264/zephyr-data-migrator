@@ -120,7 +120,7 @@ public class ZapiService {
     }
 
     public Map<String, String> migrateTestStepData(String sourceInstance, String targetInstance, List<JiraIssue> issues) {
-        Map<String, String> result = new TreeMap<>();
+        Map<String, String> result = new HashMap<>();
         log.info("migrateTestStepData::: sourceInstance: " + sourceInstance + "  targetInstance: " + targetInstance);
         int size = issues.size() + 1;
         int index = 1;
@@ -178,7 +178,8 @@ public class ZapiService {
 
     private String removeUnicodeChar(String inputString) {
         String convertedString = Normalizer.normalize(inputString, Normalizer.Form.NFKD);
-        convertedString = convertedString.replaceAll("[^\\\\p{Print}]", "");
+       // convertedString = convertedString.replaceAll("[^\\\\p{Print}]", "");
+        convertedString = convertedString.replaceAll("\\\\[lnrt]", " ").replace("\\\\", "\\");
         return convertedString;
     }
 
