@@ -544,7 +544,7 @@ public class ZapiService {
         String versionId = null;
         try {
             JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
-            String endPointUrl = "/rest/api/2/project" + projectId + "/versions";
+            String endPointUrl = "/rest/api/2/project/" + projectId + "/versions";
             String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
             log.info("getVersionId::: endPoint:" + endPoint);
             if (versionIdCache.containsKey(endPoint)) {
