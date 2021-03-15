@@ -585,13 +585,14 @@ public class ZapiService {
                     requestBuilder.withAuthHeaderJson(jInstance.getUsername(), jInstance.getPassword()), String.class).getBody();
             log.info("getCycleId::: response:" + response);
             JSONObject cycleObject = new JSONObject(response);
-            Iterator<String> keys = cycleObject.keys();
+            Iterator<String> keys = cycleObject.keys(); //versions
             while (keys.hasNext()) {
                 String key = keys.next();
                 if (!"recordCount".equals(key)) {
                     JSONObject obj = cycleObject.getJSONObject(key);
                     if (obj.getString("name").equals(cycleName)) {
-                        cycleId = obj.getString("id");
+                        //cycleId = obj.getString("id"); update in JSON response
+                        cycleId = key;
                         break;
                     }
                 }
