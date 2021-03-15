@@ -588,7 +588,7 @@ public class ZapiService {
             Iterator<String> keys = cycleObject.keys(); //versions
             while (keys.hasNext()) {
                 String key = keys.next();
-                if (!"recordCount".equals(key)) {
+                if (!"recordsCount".equals(key)) {
                     JSONObject obj = cycleObject.getJSONObject(key);
                     if (obj.getString("name").equals(cycleName)) {
                         //cycleId = obj.getString("id"); update in JSON response
