@@ -672,25 +672,28 @@ public class ZapiService {
                 payload.put("versionId", versionId);
                 //payload.put("versionId", versionId);
                 payload.put("issues", issueKeys);
+                payload.put("cycleId",cycleId);
                 JiraInstance jInstance = InstanceHelper.getInstanceDetailsByName(instance, properties);
-                String endPointUrl = "/rest/zapi/latest/execution/addTeststoCycle/";
+                String endPointUrl = "/rest/zapi/latest/execution/addTestsToCycle/"; //addTestsToCycle
                 String endPoint = AppUtils.getEndPoint(jInstance.getUrl(), endPointUrl);
                 log.info("attachTestCaseToCycle::: endPoint:" + endPoint);
                 String jsonString = objectMapper.writeValueAsString(payload);
                 log.info("attachTestCaseToCycle::: request:" + jsonString);
-                String response = rawRestTemplate.exchange(endPoint, HttpMethod.POST,
-                        requestBuilder.withAuthHeaderandBody(jInstance.getUsername(), jInstance.getPassword(), jsonString), String.class).getBody();
-                log.info("attachTestCaseToCycle::: response:" + response);
-                //JSONObject cycleResponse = new JSONObject(response);
-                // check for job progress token and wait for it
-                try {
-                    String jobProgressToken = new JSONObject(response).getString("jobProgressToken");
-                    log.error("attachTestCaseToCycle::: wait for cycle to be created");
-                    waitAsyncJobToBeCompleted(instance, jobProgressToken);
-                } catch (Exception ex) {
 
+                    String response = rawRestTemplate.exchange(endPoint, HttpMethod.POST,
+                            requestBuilder.withAuthHeaderandBody(jInstance.getUsername(), jInstance.getPassword(), jsonString), String.class).getBody();
+                    log.info("attachTestCaseToCycle::: response:" + response);
+                    //JSONObject cycleResponse = new JSONObject(response);
+                    // check for job progress token and wait for it
+                    try {
+                        String jobProgressToken = new JSONObject(response).getString("jobProgressToken");
+                        log.error("attachTestCaseToCycle::: wait for cycle to be created");
+                        waitAsyncJobToBeCompleted(instance, jobProgressToken);
+                    } catch (Exception ex) {
+
+                    }
                 }
-            }
+
         } catch (Exception ex) {
             log.error("attachTestCaseToCycle::: Error while creating cycle on target:", ex);
             throw ex;
