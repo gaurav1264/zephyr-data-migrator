@@ -82,7 +82,7 @@ public class ZapiService {
             }
             log.info("getIssuesByProjectKey::: Total Number of issues :" + total + " ,Total iteration : " + iteration);
             int startAt = 0;
-            for (int i = 1; i < iteration; i++) {
+            for (int i = 1; i <= iteration; i++) {
                 log.info("getIssuesByProjectKey::: Current Iteration :" + i + " /" + iteration);
                 JSONArray issues = getIssuesByJQL(instance, projectKey, startAt, maxResults);
                 for (int index = 0; index < issues.length(); index++) {
